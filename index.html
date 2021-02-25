@@ -1,0 +1,30 @@
+<html>
+        <head>
+            <style>
+                body{
+                    margin:0;
+                    height : 100%;
+                    width:100%;
+                    background : #131313;
+                }
+            </style>
+            <script src="tf.min.js"></script>
+        </head>
+        <body>
+            <img src='bp.png'>
+        </body>
+        <script>
+
+            image = document.querySelector('img');
+            const check = tf.browser.fromPixels(image).resizeNearestNeighbor([480, 320]).toFloat().expandDims();
+
+            async function predictor() {
+                const model = await tf.loadLayersModel('model/model.json');
+                // model.summary();
+                const prediction = model.predict(check);
+                console.log(prediction)
+                prediction.print();
+            }
+            predictor();
+        </script>
+</html>
