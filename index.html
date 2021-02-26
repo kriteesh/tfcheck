@@ -5,34 +5,53 @@
                     margin:0;
                     height : 100%;
                     width:100%;
+                    font-family : monospace;
                 }
                 #output{
-                    height : 400px;
-                    width : 400px;
-                    margin : 0 10vh;
+                    height: 320px;
+                    width: 480px;
+                    /* margin: 0 10vh; */
+                    border: 2px solid black;
+                    border-radius: 10px;
+                    display: flex;
+                    margin-left: calc(50% - 240px);
                 }
                 input{
-                    margin : 0 10vh;
+                    margin : 5vh 0;
                     width : 30vw;
                     height : 10vh;
                     line-height: 10vh;
+                    margin-left : 15vw;
+                }
+                .container{
+                    width : 60vw;
+                    height : auto;
+                    display : flex;
+                    flex-direction : column;
+                }
+
+                #pred{
+                    margin : 5vh 0;
+                    text-align : center;
                 }
             </style>
             <script src="tf.min.js"></script>
         </head>
         <body>
-            <center>  
-                <input type="file"  accept="image/*" name="ima" id="file">
-                <img id="output"/>	
-                <div id="pred"></div>
+            <center>
+                <div class='container'>  
+                    <input type="file"  accept="image/*" name="ima" id="file">
+                    <img id="output"/>	
+                    <div id="pred"></div>
+                </div>
             </center>
+
           
         </body>
         <script>
             var loadFile = function(event) {
                 var image = document.getElementById('output');
                 image.src = URL.createObjectURL(event.target.files[0]);
-                console.log(image.width,image.height);
                 const check = tf.browser.fromPixels(image).resizeNearestNeighbor([320, 480]).toFloat().expandDims();
                 console.log(check);
                 const pred = document.querySelector('#pred');
