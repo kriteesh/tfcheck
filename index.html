@@ -49,22 +49,48 @@
           
         </body>
         <script>
-            var loadFile = function(event) {
+            var loadFile = async function(event) {
                 var image = document.getElementById('output');
                 image.src = URL.createObjectURL(event.target.files[0]);
-                const check = tf.browser.fromPixels(image).resizeNearestNeighbor([320, 480]).toFloat().expandDims();
-                console.log(check);
+                // const check = tf.browser.fromPixels(image).resizeNearestNeighbor([320, 480]).toFloat().expandDims();
+                // console.log(check);
                 const pred = document.querySelector('#pred');
+                let blob = await fetch(image.src).then(r => r.blob());
+                let dataUrl = await new Promise(resolve => {
+                let reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+                })
+                    let data = {
+                        "encoded_string": dataUrl,
+                        "pnr": "newwow",
+                        "flight_no": "0765",
+                        "flight_op": "MH"
+                    }
 
-                async function predictor() {
-                    const model = await tf.loadLayersModel('model/model.json');
-                    // model.summary();
-                    const prediction = model.predict(check);
-                    pred.innerText = prediction;
-                    prediction.print();
-                }
-                predictor();
-            };
+                    let response = await fetch('https://39u3b3cep7.execute-api.ap-south-1.amazonaws.com/prod/checker', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    let result = await response.json();
+                    console.log(result);
+                    pred.innerText+=(result.label);
+
+                // async function predictor() {
+                //     const model = await tf.loadLayersModel('model/model.json');
+                //     // model.summary();
+                //     const prediction = model.predict(check);
+                //     pred.innerText += prediction;
+                //     prediction.print();
+                // }
+                // predictor();
+            }
+
+
 
             inp = document.querySelector('input');
             inp.onchange = () => loadFile(event);
