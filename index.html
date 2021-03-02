@@ -7,9 +7,12 @@
                     width:100%;
                     font-family : monospace;
                 }
+                .container>div{
+                    font-size:4vh;
+                }
                 #output{
-                    height: 320px;
-                    width: 480px;
+                    /* height: 320px;
+                    width: 480px; */
                     /* margin: 0 10vh; */
                     border: 2px solid black;
                     border-radius: 10px;
@@ -78,7 +81,7 @@
 
                     let result = await response.json();
                     console.log(result);
-                    pred.innerText+=(result.label);
+                    pred.innerText=result.label;
 
                 // async function predictor() {
                 //     const model = await tf.loadLayersModel('model/model.json');
