@@ -8,7 +8,7 @@
                     font-family : monospace;
                 }
                 .container>div{
-                    font-size:4vh;
+                    font-size:3vh;
                 }
                 #output{
                     /* height: 320px;
@@ -22,17 +22,28 @@
                 input{
                     margin : 5vh 0;
                     width : 30vw;
-                    height : 10vh;
-                    line-height: 10vh;
+                    height : 5vh;
+                    line-height: 5vh;
                     margin-left : 15vw;
                 }
                 .container{
-                    width : 60vw;
+                    width : 100vw;
                     height : auto;
                     display : flex;
-                    flex-direction : column;
+                    flex-direction : row;
                 }
 
+                .container>div{
+                    display:flex;
+                    flex-direction: column;
+                }
+                .outputter{
+                    width:50vw;
+                }
+                .inputter{
+                    width:50vw;
+                    justify-content : space-evenly;
+                }
                 #pred{
                     margin : 5vh 0;
                     text-align : center;
@@ -42,16 +53,35 @@
         </head>
         <body>
             <center>
-                <div class='container'>  
-                    <input type="file"  accept="image/*" name="ima" id="file">
+                <div class='container'>
+                    <div class='inputter'>
+                        <div>pnr</div>
+                        <input type="text" class='pnr'>
+                        <div>flight no</div>
+                        <input type='text' class='flight_no'>
+                        <div>flight op</div>
+                        <input type='text' class='flight_op'>
+                        <input type="file"  accept="image/*" name="ima" id="file">
+                    </div>  
+                   <div class="outputter">
                     <img id="output"/>	
                     <div id="pred"></div>
+                   </div>
+                    
                 </div>
             </center>
 
           
         </body>
         <script>
+            pnr = document.querySelector('.pnr')
+            fno = document.querySelector('.flight_no')
+            fop = document.querySelector('.flight_op')
+            let p,q,r;
+            pnr.onchange = ()=> p = pnr.value;
+            fno.onchange = ()=> q = fno.value;
+            fop.onchange = ()=> r = fop.value;
+
             var loadFile = async function(event) {
                 var image = document.getElementById('output');
                 image.src = URL.createObjectURL(event.target.files[0]);
@@ -66,9 +96,9 @@
                 })
                     let data = {
                         "encoded_string": dataUrl,
-                        "pnr": "newwow",
-                        "flight_no": "0765",
-                        "flight_op": "MH"
+                        "pnr": p,
+                        "flight_no": q,
+                        "flight_op": r
                     }
 
                     let response = await fetch('https://39u3b3cep7.execute-api.ap-south-1.amazonaws.com/prod/checker', {

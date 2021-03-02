@@ -1,0 +1,228 @@
+# import sys 
+# sys.path.append('/mnt/access')
+import base64
+import json
+import numpy as np
+import pandas as pd
+import boto3
+# import os
+# import tensorflow as tf  
+# from tensorflow.keras.models import model_from_json, load_model
+# # from tensorflow.keras.preprocessing import image
+from fuzzywuzzy import fuzz
+import itertools
+import re
+from string import punctuation
+import PIL.Image as Image
+from io import BytesIO
+
+s3 = boto3.resource('s3')
+my_bucket = 'textract-smoothie'
+
+# model_json = s3.Object(my_bucket, 'model_3_1501.json')
+# model_json = model_json.get()['Body'].read()
+# loaded_model = model_from_json(model_json)
+
+# bucket = s3.Bucket(my_bucket)
+# bucket.download_file('model_weights_3_1501.h5', './model_weights_3_1501.h5')
+# loaded_model.load_weights("./model_weights_3_1501.h5")
+
+def save_document_to_s3(encoded_string, name):
+    encoded_output = encoded_string[encoded_string.find(",")+1:]
+    encoded_output = encoded_output + "=" * (4 - len(encoded_output) % 4)
+    decoded_bytes = base64.b64decode(encoded_output)
+    bucket = s3.Object('textract-smoothie',name)
+    bucket.put(Body=decoded_bytes)
+    print('Document saved to s3')
+
+
+def get_textract_model():
+    textract = boto3.client('textract', region_name='ap-south-1')
+    return textract
+
+
+def get_textract_response(my_bucket, documentName):
+    textract = get_textract_model()
+    response = textract.detect_document_text(
+        Document={
+            'S3Object': {
+                'Bucket': my_bucket,
+                'Name': documentName
+            }})
+    return response
+
+
+def get_response_text(response):
+    res_list = []
+    for item in response["Blocks"]:
+        if item["BlockType"] == "LINE":
+            res_list.append(item["Text"])
+    return res_list
+
+
+# def pre_process_image(document_path):
+#     img_byte = bucket.Object(document_path).get().get('Body').read()
+# #     img = cv2.imdecode(np.asarray(bytearray(img_byte)), cv2.IMREAD_UNCHANGED)
+#     img = Image.open(BytesIO(img_byte))
+#     img = img.resize((480, 320))
+#     img = np.array(img) / 255
+#     img = img.reshape(-1, 320, 480, 3)
+#     return img
+
+
+def predict(img, loaded_model):
+    return 0
+    # classes = loaded_model.predict(img)
+    # return classes[0][0] #0 is boarding-pass & 1 is other
+
+
+def calculate_matched_string(row, col, textract_col):
+    fuzz_ratio_dict = dict()
+    if row[col]:
+        for word in [word.lower() for word in row[textract_col]]:
+            try:
+                fuzz_ratio_dict[word] = fuzz.ratio(str(row[col]).lower(), word)
+            except:
+                return 'not_calculated'
+        try:
+            return max(fuzz_ratio_dict, key=fuzz_ratio_dict.get)
+        except:
+            return np.nan
+    else:
+        return row[col]
+    
+
+def calculate_matching_score(row, col, matching_col, textract_col):
+    fuzz_ratio_dict = dict()
+    if row[textract_col]:
+        try:
+            score = fuzz.ratio(str(row[col]).lower(), str(row[matching_col]).lower()) / 100
+            return score
+        except:
+            return 'not_calculated'
+    else:
+        return 0
+
+    
+def is_boarding_pass_fields_present(row, textract_col):
+    fuzz_ratio_dict = dict()
+    found_word_list = []
+    if row[textract_col]:
+        text_lower = [word.lower() for word in row[textract_col]]
+        for word in ['gate', 'seq', 'boarding', 'seat']:
+            if (word in text_lower):
+                found_word_list.append(True)
+        if all(found_word_list) & (len(found_word_list) >= 2):
+            return True
+        else:
+            return False
+    else:
+        return np.nan
+    
+
+def expand_text_list_1(text):
+    try: 
+        text_list = list(itertools.chain.from_iterable([word.split() for word in text]))
+        punctuations = list(set(punctuation))
+        alphanumeric_text_list = [word.translate(str.maketrans('', '', punctuation)).strip() for word in text_list]
+        return alphanumeric_text_list
+    except:
+        return text
+    
+    
+def expand_text_list_2(text):
+    try: 
+        text_list = list(itertools.chain.from_iterable([word.split() for word in text]))
+        punctuations = list(set(punctuation))
+        alphanumeric_text_list = [word.translate(str.maketrans('', '', punctuation)).strip() for word in text_list]
+        alphanumeric_text_list = separate_num(alphanumeric_text_list)
+        return alphanumeric_text_list
+    except:
+        return text
+    
+
+def separate_num(text):
+    regex1 = re.compile("([a-zA-Z]+)([0-9]+)")
+    regex2 = re.compile("([0-9]+)([a-zA-Z]+)")
+    res_1 = [list(regex1.findall(word)[0]) if regex1.findall(word) else [word] for word in text]
+    res_1 = list(itertools.chain.from_iterable(res_1))
+    res_2 = [list(regex2.findall(word)[0]) if regex2.findall(word) else [word] for word in res_1]
+    res_2 = list(itertools.chain.from_iterable(res_2))
+    return res_2
+
+
+def get_combined_score(compute_df, textract_col):
+    compute_df.loc[:, f'matched_FO_{textract_col}'] = compute_df.apply(lambda row: calculate_matched_string(row, 'flight_operator', 
+                                                                                            textract_col), axis=1)
+    compute_df.loc[:, f'matched_FNO_{textract_col}'] = compute_df.apply(lambda row: calculate_matched_string(row, 'flight_no', 
+                                                                                            textract_col), axis=1)
+
+    compute_df.loc[:, f'matched_FO_score_{textract_col}'] = compute_df.apply(lambda row: calculate_matching_score(row, 'flight_operator', 
+                                                                                                  f'matched_FO_{textract_col}', textract_col), axis=1)
+    
+    compute_df.loc[:, f'matched_FNO_score_{textract_col}'] = compute_df.apply(lambda row: calculate_matching_score(row, 'flight_no', 
+                                                                                                   f'matched_FNO_{textract_col}', textract_col), axis=1)
+
+    compute_df.loc[:, 'is_fields_present'] = compute_df.apply(lambda row: is_boarding_pass_fields_present(row, textract_col), axis=1)
+    compute_df.loc[compute_df.is_fields_present == False, f'matched_FO_score_{textract_col}'] = 0
+    compute_df.loc[compute_df.is_fields_present == False, f'matched_FNO_score_{textract_col}'] = 0
+    
+    compute_df.loc[:, f'combined_score_{textract_col}'] = compute_df[f'matched_FO_score_{textract_col}'] + \
+                                                          compute_df[f'matched_FNO_score_{textract_col}']
+    return compute_df
+    
+    
+def is_boarding_pass(image, flight_operator, flight_no):
+    # textract
+    response = get_textract_response('textract-smoothie', image)
+    res_list = get_response_text(response)
+    
+    # img = pre_process_image(image)
+    # prediction = predict_mod(img, loaded_model)
+    prediction = 0
+    compute_df = pd.DataFrame({'model_prediction': [prediction], 'textract_op': [res_list], 'flight_operator': [flight_operator],
+                               'flight_no': [flight_no]})
+    compute_df.loc[:, 'textract_op_1'] = compute_df.textract_op.apply(lambda x: expand_text_list_1(x))
+    compute_df.loc[:, 'textract_op_2'] = compute_df.textract_op.apply(lambda x: expand_text_list_2(x))
+    
+    compute_df = get_combined_score(compute_df, 'textract_op_1')
+    compute_df = get_combined_score(compute_df, 'textract_op_2')    
+    compute_df.loc[compute_df.combined_score_textract_op_1 >= compute_df.combined_score_textract_op_2, 'combined_score'] = compute_df.loc[compute_df.combined_score_textract_op_1 >= compute_df.combined_score_textract_op_2, 'combined_score_textract_op_1']
+    compute_df.loc[compute_df.combined_score_textract_op_1 < compute_df.combined_score_textract_op_2, 'combined_score'] = compute_df.loc[compute_df.combined_score_textract_op_1 < compute_df.combined_score_textract_op_2, 'combined_score_textract_op_2']
+    compute_df.loc[:, 'is_boarding_pass'] = np.where(compute_df.combined_score >= 1.4, 'boarding-pass', 'other')
+    return compute_df.loc[:, 'is_boarding_pass'].values[0]
+    
+
+def lambda_handler(event, context):
+    data_type = ''
+    input_json = event
+    encoded_string = input_json['encoded_string']
+    pnr = input_json['pnr']
+    flight_no = input_json['flight_no']
+    flight_operator = input_json['flight_op']
+    
+    if '/pdf;' in encoded_string:
+        data_type = 'pdf'
+    elif '/png;' in encoded_string:
+        data_type ='png'
+    elif '/jpeg;' in encoded_string:
+        data_type ='jpeg'
+    elif '/jpg;' in encoded_string:
+        data_type ='jpg'
+        
+    name = pnr + '.' + data_type
+    # path = 'https://textract-smoothie.s3.ap-south-1.amazonaws.com/value4.png'
+    
+    save_document_to_s3(encoded_string, name)
+    # if 'pdf' in encoded_string:
+    #     # call pdf2image lambda
+    #     labels = []
+    #     for image in images:
+    #         labels.append(is_boarding_pass(image, flight_operator, flight_no))
+    #     if 'boarding-pass' in labels:
+    #         return {'label': 'boarding-pass'}
+    #     else:
+    #         return {'label': 'other'}
+    # elif 'image' in encoded_string:
+    output_label = is_boarding_pass(name, flight_operator, flight_no)
+    return {'label': output_label}
