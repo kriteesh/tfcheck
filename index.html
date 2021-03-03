@@ -111,6 +111,7 @@
             inp = document.querySelector('#file');
             sub = document.querySelector('#submit');
             sub.onclick = async () =>{
+                pred.innerText ='...';
                 let data = {
                         "encoded_string": dataUrl,
                         "pnr": p,
@@ -125,7 +126,7 @@
                         },
                         body: JSON.stringify(data)
                     });
-
+                    
                     let result = await response.json();
                     console.log(result);
                     pred.innerText=result.label;
