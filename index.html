@@ -12,7 +12,7 @@
                 }
                 #output{
                     /* height: 320px;
-                    width: 480px; */
+                       width: 480px; */
                     /* margin: 0 10vh; */
                     border: 2px solid black;
                     border-radius: 10px;
@@ -78,9 +78,6 @@
             fno = document.querySelector('.flight_no')
             fop = document.querySelector('.flight_op')
             let p,q,r;
-            pnr.onchange = ()=> p = pnr.value;
-            fno.onchange = ()=> q = fno.value;
-            fop.onchange = ()=> r = fop.value;
 
             var loadFile = async function(event) {
                 var image = document.getElementById('output');
@@ -94,6 +91,9 @@
                 reader.onload = () => resolve(reader.result);
                 reader.readAsDataURL(blob);
                 })
+
+                console.log(dataUrl);
+
                     let data = {
                         "encoded_string": dataUrl,
                         "pnr": p,
@@ -113,20 +113,23 @@
                     console.log(result);
                     pred.innerText=result.label;
 
-                // async function predictor() {
-                //     const model = await tf.loadLayersModel('model/model.json');
-                //     // model.summary();
-                //     const prediction = model.predict(check);
-                //     pred.innerText += prediction;
-                //     prediction.print();
-                // }
-                // predictor();
+                    // async function predictor() {
+                    //     const model = await tf.loadLayersModel('model/model.json');
+                    //     // model.summary();
+                    //     const prediction = model.predict(check);
+                    //     pred.innerText += prediction;
+                    //     prediction.print();
+                    // }
+                    // predictor();
             }
 
 
 
-            inp = document.querySelector('input');
+            inp = document.querySelector('#file');
             inp.onchange = () => loadFile(event);
+            pnr.onchange = ()=> p = pnr.value;
+            fno.onchange = ()=> q = fno.value;
+            fop.onchange = ()=> r = fop.value;
             
         </script>
 </html>
