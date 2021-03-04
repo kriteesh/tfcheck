@@ -8,7 +8,7 @@
                     font-family : monospace;
                 }
                 .container>div{
-                    font-size:3vh;
+                    font-size:4vmin;
                 }
                 #output{
                     /* height: 320px;
@@ -17,20 +17,21 @@
                     border: 2px solid black;
                     border-radius: 10px;
                     display: flex;
-                    margin-left: calc(50% - 240px);
                 }
                 input{
-                    margin : 5vh 0;
-                    width : 30vw;
-                    height : 5vh;
-                    line-height: 5vh;
-                    margin-left : 15vw;
+                    margin : 2vh 0;
+                    width : 50vw;
+                    height : 8vmin;
+                    line-height: 8vmin;
+                    margin-left : 25vw;
+                    font-size : 4vmin;
                 }
+
                 .container{
                     width : 100vw;
                     height : auto;
                     display : flex;
-                    flex-direction : row;
+                    flex-direction : column;
                 }
 
                 .container>div{
@@ -38,10 +39,12 @@
                     flex-direction: column;
                 }
                 .outputter{
-                    width:50vw;
+                    width:90vw;
+                    margin-left:5vw;
                 }
                 .inputter{
-                    width:50vw;
+                    width:100vw;
+                    margin-top : 2vh;
                     justify-content : space-evenly;
                 }
                 #pred{
@@ -55,18 +58,16 @@
             <center>
                 <div class='container'>
                     <div class='inputter'>
-                        <div>pnr</div>
-                        <input type="text" class='pnr'>
-                        <div>flight no</div>
-                        <input type='text' class='flight_no'>
-                        <div>flight op</div>
-                        <input type='text' class='flight_op'>
+                        <input type="text" class='pnr' placeholder="pnr here">
+                          <input type='text' class='flight_op' placeholder="flight op here">
+                        <input type='text' class='flight_no' placeholder="flight_no here">
+                      
                         <input type="file"  accept="image/*" name="ima" id="file">
                         <input type="submit" id='submit'>
                     </div>  
                    <div class="outputter">
-                    <img id="output"/>	
                     <div id="pred"></div>
+                    <img id="output"/>	
                    </div>
                     
                 </div>
@@ -129,7 +130,7 @@
                     
                     let result = await response.json();
                     console.log(result);
-                    pred.innerText=result.label;
+                    pred.innerText=result.label + ' -->  ' + result.score;
             }
             inp.onchange = () => loadFile(event);
             pnr.onchange = ()=> p = pnr.value;
