@@ -59,10 +59,9 @@
             <center>
                 <div class='container'>
                     <div class='inputter'>
-                        <input type="text" class='pnr' placeholder="pnr here">
+                        <input type="text" class='pnr' placeholder="poicy number here">
                           <input type='text' class='flight_op' placeholder="flight op here">
                         <input type='text' class='flight_no' placeholder="flight_no here">
-                      
                         <input type="file"  accept="image/*" name="ima" id="file">
                         <input type="submit" id='submit'>
                     </div>  
@@ -138,9 +137,10 @@
                 pred.innerText ='...';
                 let data = {
                         "encoded_string": dataUrl,
-                        "pnr": p,
+                        "policy_no": p,
                         "flight_no": q,
-                        "flight_op": r
+                        "flight_op": r,
+                        "doc_num" : '1'
                     }
 
                     let response = await fetch('https://39u3b3cep7.execute-api.ap-south-1.amazonaws.com/prod/checker', {

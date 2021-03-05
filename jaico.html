@@ -1,54 +1,317 @@
-<html>
-<body>
-  <script type="text/javascript" src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
-  <script type="text/javascript">
-var url = "https://docs.google.com/document/export?format=pdf&id=1ML11ZyyMpnAr6clIAwWrXD53pQgNR-DppMYwt9XvE6s&token=AC4w5Vg7fSWH1Hq0SgNckx4YCvnGPaScyw%3A1423618416864";
 
-var pages = [], heights = [], width = 0, height = 0, currentPage = 1;
-var scale = 1.5;
-
-function draw() {
-    var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-    for(var i = 0; i < pages.length; i++)
-        ctx.putImageData(pages[i], 0, heights[i]);
-    document.body.appendChild(canvas);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- utf-8 works for most cases -->
+<meta name="viewport" content="width=device-width">
+<!-- Forcing initial-scale shouldn't be necessary -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Use the latest (edge) version of IE rendering engine -->
+<title>Bharti Axa</title>
+<!-- The title tag shows in email notifications, like Android 4.4. -->
+<style type="text/css">
+/* What it does: Remove spaces around the email design added by some email clients. */
+  	/* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100% !important;
+    width: 100% !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+/* What it does: Stops email clients resizing small text. */
+* {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    box-sizing: border-box;
+}
+/* What it does: Forces Outlook.com to display emails full width. */
+.ExternalClass {
+    width: 100%;
+}
+/* What it does: Stops Outlook from adding extra spacing to tables. */
+table, td {
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+}
+/* What it does: Fixes webkit padding issue. */
+table {
+    border-spacing: 0 !important;
+}
+/* What it does: Fixes Outlook.com line height. */
+.ExternalClass, .ExternalClass * {
+    line-height: 100%;
+}
+/* What it does: Fix for Yahoo mail table alignment bug. */
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+/* What it does: Uses a better rendering method when resizing images in IE. */
+img {
+    -ms-interpolation-mode: bicubic;
+}
+/* What it does: Overrides styles added when Yahoo's auto-senses a link. */
+.yshortcuts a {
+    border-bottom: none !important;
+}
+/* What it does: Overrides blue, underlined link auto-detected by iOS Mail. */
+    /* Create a class for every link style needed; this template needs only one for the link in the footer. */
+.mobile-link--footer a {
+    color: #666666 !important;
+}
+/* What it does: Overrides styles added images. */
+img {
+    border: 0 !important;
+    outline: none !important;
+    text-decoration: none !important;
 }
 
-pdfjsLib.disableWorker = false; // due to CORS
+/* Media Queries */
+@media screen and (max-device-width: 700px), screen and (max-width: 700px) {
+/* What it does: Overrides email-container's desktop width and forces it into a 100% fluid width. */
+.email-container {
+    width: 100% !important;
+}
+/* What it does: Forces images to resize to the width of their container. */
+img[class="fluid"], img[class="fluid-centered"], table[class="fluid-table"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: auto !important;
+    border-right: none !important;
+    border-left: none !important;
+}
+/* And center justify these ones. */
+img[class="fluid-centered"] {
+    margin: auto !important;
+}
+/* What it does: Forces table cells into full-width rows. */
+td[class="stack-column"], td[class="stack-column-center"] {
+    display: block !important;
+    width: 100% !important;
+    direction: ltr !important;
+    border-right: none !important;
+    border-left: none !important;
+    box-sizing: border-box;
+}
+/* And center justify these ones. */
+td[class="stack-column-center"] {
+    text-align: center !important;
+}
+/* Data Table Styles */
+ 			/* What it does: Hides table headers */
+td[class="data-table-th"] {
+    display: none !important;
+}
+/* What it does: Change the look and layout of the remaining td's */
+td[class="data-table-td"], td[class="data-table-td-title"] {
+    display: block !important;
+    width: 100% !important;
+    border: 0 !important;
+}
+/* What it does: Changes the appearance of the first td in each row */
+td[class="data-table-td-title"] {
+    font-weight: bold;
+    color: #333333;
+    padding: 10px 0 0 0 !important;
+    border-top: 2px solid #eeeeee !important;
+}
+/* What it does: Changes the appearance of the other td's in each row */
+td[class="data-table-td"] {
+    padding: 5px 0 0 0 !important
+}
+/* What it does: Provides a visual divider between table rows. In this case, a bit of extra space. */
+td[class="data-table-mobile-divider"] {
+    display: block !important;
+    height: 20px;
+}
+/* END Data Table Styles */
 
-pdfjsLib.getDocument(url).then(function (pdf) {
-    getPage();
+}
+</style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  style="margin:0; padding:0; -webkit-text-size-adjust:none; -ms-text-size-adjust:none;">
+<table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" style="border-collapse:collapse;">
+  <tr>
+    <td><!-- Email wrapper : BEGIN -->
+      
+      <table border="0" width="620" cellpadding="0" cellspacing="0" align="center" style="width:620px; border: 1px solid #f6f6f6; margin: auto;" class="email-container">
+        <tr>
+          <td><!-- Logo + Links : BEGIN --> 
+            
+            <!-- Logo + Links : END --> 
+            
+            <!-- Main Email Body : BEGIN -->
+            
+            <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+              
+              <!-- Single Fluid Image, No Crop : BEGIN -->
+              
+              <tr>
+                <td><table bgcolor="#FFF" width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td style="background-color: #ffffff;" rowspan="3"><img width="100%" src="images/r_01.png" alt="Bharti Axa Logo" style="display: block; border: none; outline: none; width: 100% "></td>
+                        <td style="background-color: #ffffff;" rowspan="3"><img width="100%" src="images/r_02.png" alt="bagira" style="display: block; width: 100%"></td>
+                        <td style="background-color: #ffffff;"><a href="https://www.bharti-axalife.com/" target="_blank"><img width="100%" src="images/r_03.png" alt="For service and claims:- www.bharti-axagi.co.in" style="display: block; width: 100%;border: none; outline: none;  box-sizing: border-box;"></a></td>
+                      </tr>
+                      <tr>
+                        <td style="background-color: #ffffff;"><a href="tel:18001032292" target="_blank"><img width="100%" src="images/r_04.png" alt="Call at 18001032292" style="display: block; border: none; outline: none; width: 100%;  box-sizing: border-box;"></a></td>
+                      </tr>
+                      
+                    </tbody>
+                  </table></td>
+              </tr>
+              <tr>
+                <td bgcolor="#FFF" width="100%" style="display: block; width: 100% ;  vertical-align: top; border: none; outline: none; background-color: #ffffff;"><a href="#" target="_blank" style="width: 100%;" ><img width="100%" height="100%" src="images/Main Illustration.png" alt="Welcome to the Bharti AXA General Insurance family!" style="width:100%; display:block; vertical-align:top; border: none; outline: none;"></a></td>
+              </tr>
+              <tr>
+                <td style="display: block;  color: #333333; text-align: left; padding: 20px 32px 0 32px; font-size: 16px; line-height:22px; ">Dear Customer,</td>
+              </tr>
+              <tr>
+                <td style="display: block;  color: #333333; text-align: left; padding: 10px 32px 30px 32px; font-size: 16px; line-height:28px; ">Your appliance has been successfully insured with us beyond the manufacturer’s warranty! Please find below a snapshot of essential details.</td>
+              </tr>
+              <tr>
+                <td><table align="center" width="92%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid #fdb813;">
+                    <tbody>
+                      <tr>
+                        <td style="text-align: center; padding: 10px; line-height: 26px; border-right: 1px solid #fdb813;"><span style="font-size: 15px; font-weight: bold; color: #00529c;">Policy Number</span></td>
+                        <td style="text-align: center; padding: 10px; line-height: 26px; border-right: 1px solid #fdb813;"><span style="font-size: 15px; font-weight: bold; color: #00529c;">Policy Start Date</span></td>
+                        <td style="text-align: center; padding: 10px; line-height: 26px; border-right: 1px solid #fdb813;"><span style="font-size: 15px; font-weight: bold; color: #00529c;">Policy End Date</span></td>
+                        <td style="text-align: center; padding: 10px; line-height: 26px;"><span style="font-size: 15px; font-weight: bold; color: #00529c;">Premium Amount</span></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align: center; padding: 10px; line-height: 26px; border-right: 1px solid #fdb813;"><span style="font-size: 15px; color: #333333;">S9837068</span></td>
+                        <td style="text-align: center; padding: 10px; line-height: 26px; border-right: 1px solid #fdb813;"> 1st April 2019</td>
+                        <td style="text-align: center; padding: 10px; line-height: 26px; border-right: 1px solid #fdb813;"> 31st March 2020</td>
+                        <td style="text-align: center; padding: 10px; line-height: 26px;">&#x20B9;2600/-</td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+              </tr>
+              <tr>
+                <td style="display: block;  color: #242527; text-align: left; padding: 12px 10px 14px 40px; font-size: 16px; ">The below policy documents are enclosed in this mail.</td>
+              </tr>
+             <!-- <tr>
+                <td><table class="responsive-table"  width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td><table  width="50%" border="0" cellspacing="0" cellpadding="0" align="left" style="padding: 0 12px;  ">
+                            <tbody>
+                              <tr>
+                                <td style="padding: 16px 0px 16px 24px;"><table width="10%" border="0" cellspacing="0" cellpadding="0" align="left" >
+                                    <tbody>
+                                      <tr>
+                                        <td><img src="images/policy_schedule.png" alt="Policy Schedule"></td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <table  width="75%" border="0" cellspacing="0" cellpadding="0" align="left">
+                                    <tbody>
+                                      <tr>
+                                        <td style="padding: 0 10px;"><span style="font-size: 16px; color: #00529c; font-weight: bold;">Policy Schedule</span><br>
+                                          <span style="font-size: 15px; border-right: 1px solid #e6446c; padding-right: 4px; line-height: 35px;">Policy Coverage </span> <span style="font-size: 15px; border-right: 1px solid #e6446c; padding-right: 4px; padding-left: 7px;  line-height: 35px;">Key Details </span> <span style="font-size: 15px;  padding-right: 4px;  line-height: 15px;">Claims Procedure</span><br>
+                                          <span style="font-size: 12px; ">You can print and keep safely in your two-wheeler at all times.</span></td>
+                                      </tr>
+                                    </tbody>
+                                  </table></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                            <table  width="50%" border="0" cellspacing="0" cellpadding="0" align="left" style="padding: 0 12px;border-left: 1px solid #00529d;">
+                            <tbody>
+                              <tr>
+                                <td style="padding: 16px 0px 16px 24px;"><table width="10%" border="0" cellspacing="0" cellpadding="0" align="left" >
+                                    <tbody>
+                                      <tr>
+                                        <td><img src="images/other.png" alt="Key Documents"></td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <table  width="75%" border="0" cellspacing="0" cellpadding="0" align="left">
+                                    <tbody>
+                                      <tr>
+                                        <td style="padding: 0 10px;"><span style="font-size: 16px; color: #00529c; font-weight: bold;">Key Documents</span><br>
+                                          <span style="font-size: 15px; padding-right: 4px; line-height: 35px;">Links to key documents</span> </td>
+                                      </tr>
+                                    </tbody>
+                                  </table></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+              </tr>-->
+              <tr>
+                <td><table class="responsive-table" width="100%" border="0" cellspacing="0" cellpadding="0" style="padding: 0 16px;">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <table class="responsive-table"  width="100%" border="0" cellspacing="0" cellpadding="0" align="left" >
+                            <tbody>
+                              <tr>
+                                <td style="padding: 16px 0px 16px 34px;"><table width="10%" border="0" cellspacing="0" cellpadding="0" align="left" >
+                                    <tbody>
+                                      <tr>
+                                        <td><img src="images/claim.png" alt="claim icon"></td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <table width="75%" border="0" cellspacing="0" cellpadding="0" align="left">
+                                    <tbody>
+                                      <tr>
+                                        <td style=""><span style="font-size: 16px; color: #00529c; font-weight: bold;">Claim</span><br>
+                                          <span style="font-size: 13px; padding-right: 4px; color: #333333;">Report claim on<a href="tel:18002662292" style="text-decoration: none; color: #00529d;">1800 266 2292</a> or <a href="mailto:support.hdfc@bhartiaxa.com" target="_blank" style="text-decoration: none; color: #00529d;">support.hdfc@bhartiaxa.com</a>.</span><br></td>
+                                      </tr>
+                                    </tbody>
+                                  </table></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          </td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+              </tr>
+              <tr>
+                <td style="display: block;  color: #242527; text-align: left; padding: 10px 10px 14px 40px; font-size: 15px; ">We thank you for choosing us, and look forward to our continued relationship!</td>
+              </tr>
+              <tr>
+                <td style="display: block;  color: #242527; text-align: left; padding: 10px 10px 14px 40px; font-size: 15px; ">Warm Regards, <br>
+                  <span style="line-height: 24px; font-size: 15px; font-weight: bold; color: #00529c;">Bharti AXA General Insurance</span></td>
+              </tr>
+              <tr>
+                <td style="display: block;  color: #666666; text-align: justify; padding: 0px 40px 14px 40px; font-size: 11px; font-weight: bold;">Registered and corporate office address: Bharti AXA General Insurance Company Limited, Unit No. 1902, 19th Floor, Parinee Crescenzo, 'G' Block, Bandra Kurla Complex, BKC Road, Near MCA Club, Bandra East, Mumbai – 400051. IRDAI Registration No. 139. CIN: U66030MH2007PLC351131.
+                Email: customer.service@bhartiaxa.com. Toll-free: 1800-103-2292. For more details on risk factors and terms and conditions, please read the sales brochure carefully before concluding the sale. For all other Terms and Conditions, please refer to policy wordings on www.bharti-axagi.co.in. Product name: Warranty Protect Insurance Policy, Bharti AXA General Insurance Company Limited. UIN: . Trade Logo displayed above belongs to Bharti Enterprises (Holdings) Private Ltd. and AXA SA respectively and used by Bharti AXA General Insurance Company under license.
 
-    function getPage() {
-        pdf.getPage(currentPage).then(function(page) {
-            console.log("Printing " + currentPage);
-            var viewport = page.getViewport(scale);
-            var canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
-            var renderContext = { canvasContext: ctx, viewport: viewport };
-
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            page.render(renderContext).then(function() {
-                pages.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-
-                heights.push(height);
-                height += canvas.height;
-                if (width < canvas.width) width = canvas.width;
-
-                if (currentPage < pdf.numPages) {
-                    currentPage++;
-                    getPage();
-                }
-                else {
-                    draw();
-                }
-            });
-        });
-    }
-});
-  </script>
+<br></td>
+              </tr>
+              <tr>
+                <td style="vertical-align: top; background-color: #00529c;"><img src="images/Footer Illustration.png" alt="footer Image"></td>
+              </tr>
+              <tr>
+                <td style="vertical-align: top;"><table bgcolor="#00529c"  width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td style="vertical-align: top;"><img src="images/r_08.png" alt="" style="width:100%; display:block; vertical-align:top;"></td>
+                      <td style="vertical-align: top;"><a href="https://www.facebook.com/BhartiAXAGeneralInsuranceCompany/" target="_blank"><img src="images/fb.png" alt="Facebook"  style="width:100%; display:block; vertical-align:top;"></a></td>
+                      <td style="vertical-align: top;"><a href="https://twitter.com/BhartiAXAGI/" target="_blank"><img src="images/tw.png" alt="twitter" style="width:100%; display:block; vertical-align:top;"></a></td>
+                      <td style="vertical-align: top;"><a href="https://www.linkedin.com/company/bharti-axa-general-insurance/" target="_blank"><img src="images/in.png" alt="linkedin" style="width:100%; display:block; vertical-align:top;"></a></td>
+                      <td style="vertical-align: top;"><img src="images/r_09.png" alt="" style="width:100%; display:block; vertical-align:top;"></td>
+                    </tr>
+                  </table></td>
+              </tr>
+            </table>
+            
+            <!-- Main Email Body : END --></td>
+        </tr>
+      </table>
+      
+      <!-- Email wrapper : END --></td>
+  </tr>
+</table>
 </body>
 </html>
