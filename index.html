@@ -63,7 +63,7 @@
                         <input type="text" class='pnr' placeholder="poicy number here">
                           <input type='text' class='flight_op' placeholder="flight op here">
                         <input type='text' class='flight_no' placeholder="flight_no here">
-                        <input type="file" name="ima" id="file">
+                        <input type="file" name="ima" id="file"  accept="application/pdf, image/*">
                         <input type="submit" id='submit'>
                     </div>  
                    <div class="outputter">
@@ -142,7 +142,7 @@
                 var image = document.getElementById('output');
                 fileObj = event.target.files[0];
                 // console.log(typeof(fileObj.type));
-                if(fileObj.type=="image/png")
+                if((fileObj.type=="image/png")||(fileObj.type=="image/jpg")||(fileObj.type=="image/jpeg"))
                 {
                     
                     streamer(event.target.files[0]);
@@ -207,7 +207,7 @@
                     
                     let result = await response.json();
                     console.log(result);
-                    pred.innerText+=result.label + ' -->  ' + result.score;
+                    pred.innerText+= "\n" + result.label + ' -->  ' + result.score;
                 }
 
             }
