@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.1.266/build/pdf.min.js"></script>
+<title>pdf to png transparent</title>
+</head>
+<body style="background-color: rgb(172, 218, 236);">
+<div>
+<input type="file" name="p" id="p">
+<!-- <input type="button" value="Blue" onclick="pdfToPng(‘blue’)" style="background-color: blue;">
+<input type="button" value="Pink" onclick="pdfToPng(‘pink’)" style="background-color: pink;">
+<input type="button" value="Red" onclick="pdfToPng(‘red’)" style="background-color: red;"> -->
+</div>
+<!-- <canvas id="canvas" style="display:none"></canvas> -->
+</body>
+<script>
+    var pdf = document.getElementById('p');
+    
+    function pdfToPng(el) {
+            file = el.files[0] 
+            fileReader = new FileReader();
+            fileReader.onload = function(ev) { 
+                pdfjsLib.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
+                    for(let i=1;i<=pdf.numPages;i++){
+                        pdf.getPage(i).then(function getPageHelloWorld(page) {
+                        var scale = 1.5;
+                        var viewport = page.getViewport(scale);
+                        var canvas = document.createElement('canvas');
+                        canvas.style.display = "none";
+                        el.appendChild(canvas);
+
+                        var context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        var task = page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        })
+                        task.promise.then(function() {
+                            let iimg = canvas.toDataURL('image/png');
+                            console.log(iimg);
+                            // changeColor(iimg, text_color)
+                        });
+                    });
+                    }
+
+                }, function(error) {
+                    console.log(error);
+                });
+                };
+        fileReader.readAsArrayBuffer(file);
+    }
+    p.oninput = ()=> pdfToPng(pdf);
+</script>
+</html>

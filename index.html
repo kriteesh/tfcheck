@@ -53,6 +53,7 @@
                 }
             </style>
             <!-- <script src="tf.min.js"></script> -->
+            <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.1.266/build/pdf.min.js"></script>
             <script src="compressor.js"></script>
         </head>
         <body>
@@ -62,7 +63,7 @@
                         <input type="text" class='pnr' placeholder="poicy number here">
                           <input type='text' class='flight_op' placeholder="flight op here">
                         <input type='text' class='flight_no' placeholder="flight_no here">
-                        <input type="file"  accept="image/*" name="ima" id="file">
+                        <input type="file" name="ima" id="file">
                         <input type="submit" id='submit'>
                     </div>  
                    <div class="outputter">
@@ -76,7 +77,8 @@
           
         </body>
         <script>
-             let p,q,r,dataUrl
+            inp = document.querySelector('#file');
+             let p,q,r,dataUrl =[];
                 const options = {
                     maxSizeMB:1,
                     maxWidthOrHeight: 1920,
@@ -86,7 +88,7 @@
                 function urlMaker(file){
                     reader = new FileReader();
                     reader.onloadend = function () {
-                        dataUrl = reader.result;
+                        dataUrl.push(reader.result);
                     };
                     reader.readAsDataURL(file);
                 }  
@@ -100,15 +102,64 @@
             fno = document.querySelector('.flight_no')
             fop = document.querySelector('.flight_op')
            
+            function pdfToPng(el) {
+            file = el.files[0] 
+            fileReader = new FileReader();
+            fileReader.onload = function(ev) { 
+                pdfjsLib.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
+                    for(let i=1;i<=pdf.numPages;i++){
+                        pdf.getPage(i).then(function getPageHelloWorld(page) {
+                        var scale = 1.5;
+                        var viewport = page.getViewport(scale);
+                        var canvas = document.createElement('canvas');
+                        canvas.style.display = "none";
+                        el.appendChild(canvas);
+
+                        var context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        var task = page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        })
+                        task.promise.then(function() {
+                            let iimg = canvas.toDataURL('image/png');
+                            dataUrl.push(iimg);
+                            // changeColor(iimg, text_color)
+                        });
+                    });
+                    }
+
+                }, function(error) {
+                    console.log(error);
+                });
+                };
+        fileReader.readAsArrayBuffer(file);
+    }
 
             var loadFile = async function(event) {
+                const pred = document.querySelector('#pred');
                 var image = document.getElementById('output');
+                fileObj = event.target.files[0];
+                // console.log(typeof(fileObj.type));
+                if(fileObj.type=="image/png")
+                {
+                    
+                    streamer(event.target.files[0]);
+                    image.src = URL.createObjectURL(fileObj);
+                }
+                else if(fileObj.type=="application/pdf"){
+                    pdfToPng(inp)
+                }
+                else{
+                    console.log("none")
+                }
 
-                image.src = URL.createObjectURL(event.target.files[0]);
                 // const check = tf.browser.fromPixels(image).resizeNearestNeighbor([320, 480]).toFloat().expandDims();
                 // console.log(check);
-                const pred = document.querySelector('#pred');
-                streamer(event.target.files[0]);
+               
+
+           
                 // let blob = await fetch(image.src).then(r => r.blob());
                 // dataUrl = await new Promise(resolve => {
                 // let reader = new FileReader();
@@ -131,16 +182,19 @@
 
 
 
-            inp = document.querySelector('#file');
+            
             sub = document.querySelector('#submit');
             sub.onclick = async () =>{
                 pred.innerText ='...';
-                let data = {
-                        "encoded_string": dataUrl,
+
+                for(let i=0;i<dataUrl.length;i++)
+                {
+                    let data = {
+                        "encoded_string": dataUrl[i],
                         "policy_no": p,
                         "flight_no": q,
                         "flight_op": r,
-                        "doc_num" : "1"
+                        "doc_num" : (i+1).toString()
                     }
 
                     let response = await fetch('https://39u3b3cep7.execute-api.ap-south-1.amazonaws.com/prod/checker', {
@@ -154,10 +208,15 @@
                     let result = await response.json();
                     console.log(result);
                     pred.innerText=result.label + ' -->  ' + result.score;
+                }
+
             }
 
 
-            inp.onchange = () => loadFile(event);
+            inp.onchange = () => {
+                
+                loadFile(event);
+            }
             pnr.onchange = ()=> p = pnr.value;
             fno.onchange = ()=> q = fno.value;
             fop.onchange = ()=> r = fop.value;
