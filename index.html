@@ -60,7 +60,7 @@
             <center>
                 <div class='container'>
                     <div class='inputter'>
-                        <input type="text" class='pnr' placeholder="poicy number here">
+                        <input type="text" class='pnr' placeholder="policy number here">
                           <input type='text' class='flight_op' placeholder="flight op here">
                         <input type='text' class='flight_no' placeholder="flight_no here">
                         <input type="file" name="ima" id="file"  accept="application/pdf, image/*">
@@ -209,6 +209,7 @@
                     console.log(result);
                     pred.innerText+= "\n" + result.label + ' -->  ' + result.score;
                 }
+                dataUrl = [];
 
             }
 
