@@ -208,7 +208,7 @@
                     
                     let result = await response.json();
                     console.log(result);
-                    pred.innerText+= "\n" + result.label + ' -->  ' + result.score;
+                    pred.innerText+= "\n" + 'doc_no_' + (i+1) + result.label + ' -->  ' + result.score;
                 }
                 
             }
