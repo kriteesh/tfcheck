@@ -17,6 +17,8 @@
                     border: 2px solid black;
                     border-radius: 10px;
                     display: flex;
+                    width: auto;
+                    height: auto;
                 }
                 input{
                     margin : 2vh 0;
@@ -68,6 +70,7 @@
                     </div>  
                    <div class="outputter">
                     <div id="pred"></div>
+                    <div id="cav"></div>
                     <img id="output"/>	
                    </div>
                     
@@ -78,7 +81,8 @@
         </body>
         <script>
             inp = document.querySelector('#file');
-             let p,q,r,dataUrl =[];
+            sub = document.querySelector('#submit');
+             let p,q,r,dataUrl =[],pdfNum;
                 const options = {
                     maxSizeMB:1,
                     maxWidthOrHeight: 1920,
@@ -102,18 +106,19 @@
             fno = document.querySelector('.flight_no')
             fop = document.querySelector('.flight_op')
            
-            function pdfToPng(el) {
+            function pdfToPng(el,pel) {
             file = el.files[0] 
             fileReader = new FileReader();
             fileReader.onload = function(ev) { 
                 pdfjsLib.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
-                    for(let i=1;i<=pdf.numPages;i++){
+                    pdfNum = pdf.numPages;
+                    for(let i=1;i<=pdfNum;i++){
                         pdf.getPage(i).then(function getPageHelloWorld(page) {
                         var scale = 1.5;
                         var viewport = page.getViewport(scale);
                         var canvas = document.createElement('canvas');
-                        canvas.style.display = "none";
-                        el.appendChild(canvas);
+                        // canvas.style.display = "none";
+                        pel.appendChild(canvas);
 
                         var context = canvas.getContext('2d');
                         canvas.height = viewport.height;
@@ -123,9 +128,9 @@
                             viewport: viewport
                         })
                         task.promise.then(function() {
-                            let iimg = canvas.toDataURL('image/png');
+                            iimg = new Image();
+                            iimg = canvas.toDataURL('image/png');
                             dataUrl.push(iimg);
-                            // changeColor(iimg, text_color)
                         });
                     });
                     }
@@ -140,6 +145,7 @@
             var loadFile = async function(event) {
                 dataUrl = [];
                 const pred = document.querySelector('#pred');
+                const cav = document.querySelector('#cav');
                 var image = document.getElementById('output');
                 fileObj = event.target.files[0];
                 // console.log(typeof(fileObj.type));
@@ -150,7 +156,7 @@
                     image.src = URL.createObjectURL(fileObj);
                 }
                 else if(fileObj.type=="application/pdf"){
-                    pdfToPng(inp)
+                    pdfToPng(inp,cav)
                 }
                 else{
                     console.log("none")
@@ -184,10 +190,10 @@
 
 
             
-            sub = document.querySelector('#submit');
+        
             sub.onclick = async () =>{
-                pred.innerText ='...';
-
+                pred.innerText ='...' + 'printing ' + dataUrl.length + ' pages';
+                
                 for(let i=0;i<dataUrl.length;i++)
                 {
                     let data = {
@@ -208,7 +214,7 @@
                     
                     let result = await response.json();
                     console.log(result);
-                    pred.innerText+= "\n" + 'doc_no_' + (i+1) + result.label + ' -->  ' + result.score;
+                    pred.innerText+= "\n" +'doc_no_' + (i+1) + "-" + result.label + ' -->  ' + result.score;
                 }
                 
             }
